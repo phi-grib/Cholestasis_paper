@@ -1,0 +1,366 @@
+---
+title: "definitive_project2"
+output: html_document
+date: '2023-02-02'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+library(httk)
+rm(list = ls())
+
+df<-read.csv("dataset_sin_pkas.csv")
+```
+
+
+```{r}
+my.new.data <- as.data.frame(df$fake_name,stringsAsFactors=FALSE)
+my.new.data <- cbind(my.new.data,as.data.frame(df$CAS_fake,
+stringsAsFactors=FALSE))
+my.new.data <- cbind(my.new.data,as.data.frame(c(df$DTXSID_fake),
+stringsAsFactors=FALSE))
+my.new.data <- cbind(my.new.data,as.data.frame(c(df$MW)))
+my.new.data <- cbind(my.new.data,as.data.frame(c(df$LOGP)))
+my.new.data <- cbind(my.new.data,as.data.frame(c(df$FUB)))
+my.new.data <- cbind(my.new.data,as.data.frame(c(df$CLint)))
+#my.new.data <- cbind(my.new.data,as.data.frame(c(df$pKa_Donor)))
+#my.new.data <- cbind(my.new.data,as.data.frame(c(df$pKa_Accept)))
+colnames(my.new.data) <- c("Name","CASRN","DTXSID","MW","LogP","Fup","CLint")
+chem.physical_and_invitro.data <- add_chemtable(my.new.data,
+current.table=
+chem.physical_and_invitro.data,
+data.list=list(
+Compound="Name",
+CAS="CASRN",
+DTXSID="DTXSID",
+MW="MW",
+logP="LogP",
+Funbound.plasma="Fup",
+Clint="CLint"),
+overwrite=TRUE,
+species="Human",
+reference="httk|chembl|medscape|NIH")
+```
+
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$BCRP)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_bcrp<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_bcrp<-rbind(answer_bcrp,output)
+}
+colnames(answer_bcrp) <- c("0.9_oral_dose_bcrp")
+answer_bcrp$DTXSID<-df$DTXSID_fake
+```
+
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$MRP2)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_mrp2<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_mrp2<-rbind(answer_mrp2,output)
+}
+colnames(answer_mrp2) <- c("0.9_oral_dose_mrp2")
+answer_mrp2$DTXSID<-df$DTXSID_fake
+```
+
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$MRP3)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_mrp3<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_mrp3<-rbind(answer_mrp3,output)
+}
+colnames(answer_mrp3) <- c("0.9_oral_dose_mrp3")
+answer_mrp3$DTXSID<-df$DTXSID_fake
+```
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$MRP4)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_mrp4<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_mrp4<-rbind(answer_mrp4,output)
+}
+colnames(answer_mrp4) <- c("0.9_oral_dose_mrp4")
+answer_mrp4$DTXSID<-df$DTXSID_fake
+```
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$OATP1B1)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_oat1<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_oat1<-rbind(answer_oat1,output)
+}
+colnames(answer_oat1) <- c("0.9_oral_dose_oat1")
+answer_oat1$DTXSID<-df$DTXSID_fake
+```
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$OATP1B3)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_oat2<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_oat2<-rbind(answer_oat2,output)
+}
+colnames(answer_oat2) <- c("0.9_oral_dose_oat2")
+answer_oat2$DTXSID<-df$DTXSID_fake
+```
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$BSEP)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_bsep<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_bsep<-rbind(answer_bsep,output)
+}
+colnames(answer_bsep) <- c("0.9_oral_dose_bsep")
+answer_bsep$DTXSID<-df$DTXSID_fake
+```
+
+```{r}
+set.seed(42)
+idx_list <- list(10^(-df$PGP)*10^6, df$DTXSID_fake)
+idx_vect <- c(1:length(idx_list[[1]]))
+answer_pgp<-data.frame()
+equiv_dose<-for(i in idx_vect){
+    x <- idx_list[[1]][i]
+    j <- idx_list[[2]][i]
+    output = calc_mc_oral_equiv(conc = x,dtxsid=j,which.quantile = c(0.9),model="1compartment")
+    answer_pgp<-rbind(answer_pgp,output)
+}
+colnames(answer_pgp) <- c("0.9_oral_dose_pgp")
+answer_pgp$DTXSID<-df$DTXSID_fake
+```
+
+
+```{r}
+library(dplyr)
+
+dataframe_together_pred<-Reduce(function(x, y) left_join(x, y, by = "DTXSID"), list(answer_bcrp,answer_mrp2,answer_mrp3,answer_mrp4,answer_bsep,answer_oat1,answer_oat2,answer_pgp))
+```
+
+```{r}
+colnames(dataframe_together_pred)[2] ="DTXSID_fake"
+```
+
+
+```{r}
+write.csv(dataframe_together_pred,"oral_total_new_pred.csv")
+```
+
+
+
+
+```{r}
+set.seed(42)
+
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_bcrp <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$BCRP)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_mrp2 <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$MRP2)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_mrp3 <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$MRP3)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_mrp4 <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$MRP4)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_oat1 <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$OATP1B1)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_oat2 <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$OATP1B3)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_bsep <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$BSEP)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+system.time(
+  suppressWarnings(
+  toxcast_equiv_dose_pgp <- mapply(FUN = calc_mc_oral_equiv,
+  conc = c(10^(-df$PGP)*10^6),
+  chem.name=my.new.data$Name,
+  MoreArgs = list(model = "1compartment",  # Model to use
+                  which.quantile = c(0.05,0.1, 0.2, 0.3,0.4,0.5,0.6,0.7,0.8,0.9), # Quantiles of Css-dose slope
+                       suppress.messages = TRUE)
+  )
+)
+)
+
+toxcast_equiv_dose_bcrp <- t(toxcast_equiv_dose_bcrp) # Transpose so that rows are chemicals
+toxcast_equiv_dose_bcrp <- as.data.frame(toxcast_equiv_dose_bcrp) # Convert to data.frame
+
+toxcast_equiv_dose_mrp2 <- t(toxcast_equiv_dose_mrp2) # Transpose so that rows are chemicals
+toxcast_equiv_dose_mrp2 <- as.data.frame(toxcast_equiv_dose_mrp2) # Convert to data.frame
+
+toxcast_equiv_dose_mrp3 <- t(toxcast_equiv_dose_mrp3) # Transpose so that rows are chemicals
+toxcast_equiv_dose_mrp3 <- as.data.frame(toxcast_equiv_dose_mrp3) # Convert to data.frame
+
+toxcast_equiv_dose_mrp4 <- t(toxcast_equiv_dose_mrp4) # Transpose so that rows are chemicals
+toxcast_equiv_dose_mrp4 <- as.data.frame(toxcast_equiv_dose_mrp4) # Convert to data.frame
+
+toxcast_equiv_dose_oat1 <- t(toxcast_equiv_dose_oat1) # Transpose so that rows are chemicals
+toxcast_equiv_dose_oat1 <- as.data.frame(toxcast_equiv_dose_oat1) # Convert to data.frame
+
+toxcast_equiv_dose_oat2 <- t(toxcast_equiv_dose_oat2) # Transpose so that rows are chemicals
+toxcast_equiv_dose_oat2 <- as.data.frame(toxcast_equiv_dose_oat2) # Convert to data.frame
+
+toxcast_equiv_dose_bsep <- t(toxcast_equiv_dose_bsep) # Transpose so that rows are chemicals
+toxcast_equiv_dose_bsep <- as.data.frame(toxcast_equiv_dose_bsep) # Convert to data.frame
+
+toxcast_equiv_dose_pgp <- t(toxcast_equiv_dose_pgp) # Transpose so that rows are chemicals
+toxcast_equiv_dose_pgp <- as.data.frame(toxcast_equiv_dose_pgp) # Convert to data.frame
+```
+
+```{r}
+toxcast_equiv_dose_bcrp<-data.frame(matrix(unlist(toxcast_equiv_dose_bcrp), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_bcrp) <- c("0.05_oral_dose_bcrp","0.1_oral_dose_bcrp", "0.2_oral_dose_bcrp", "0.3_oral_dose_bcrp", "0.4_oral_dose_bcrp", "0.5_oral_dose_bcrp", "0.6_oral_dose_bcrp", "0.7_oral_dose_bcrp", "0.8_oral_dose_bcrp", "0.9_oral_dose_bcrp")
+
+toxcast_equiv_dose_mrp2<-data.frame(matrix(unlist(toxcast_equiv_dose_mrp2), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_mrp2) <- c("0.05_oral_dose_mrp2","0.1_oral_dose_mrp2", "0.2_oral_dose_mrp2", "0.3_oral_dose_mrp2", "0.4_oral_dose_mrp2", "0.5_oral_dose_mrp2", "0.6_oral_dose_mrp2", "0.7_oral_dose_mrp2", "0.8_oral_dose_mrp2", "0.9_oral_dose_mrp2")
+
+toxcast_equiv_dose_mrp3<-data.frame(matrix(unlist(toxcast_equiv_dose_mrp3), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_mrp3) <- c("0.05_oral_dose_mrp3", "0.1_oral_dose_mrp3","0.2_oral_dose_mrp3", "0.3_oral_dose_mrp3", "0.4_oral_dose_mrp3", "0.5_oral_dose_mrp3", "0.6_oral_dose_mrp3", "0.7_oral_dose_mrp3", "0.8_oral_dose_mrp3", "0.9_oral_dose_mrp3")
+
+toxcast_equiv_dose_mrp4<-data.frame(matrix(unlist(toxcast_equiv_dose_mrp4), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_mrp4) <- c("0.05_oral_dose_mrp4", "0.1_oral_dose_mrp4", "0.2_oral_dose_mrp4", "0.3_oral_dose_mrp4", "0.4_oral_dose_mrp4", "0.5_oral_dose_mrp4", "0.6_oral_dose_mrp4", "0.7_oral_dose_mrp4", "0.8_oral_dose_mrp4", "0.9_oral_dose_mrp4")
+
+toxcast_equiv_dose_oat1<-data.frame(matrix(unlist(toxcast_equiv_dose_oat1), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_oat1) <- c("0.05_oral_dose_oat1", "0.1_oral_dose_oat1","0.2_oral_dose_oat1", "0.3_oral_dose_oat1", "0.4_oral_dose_oat1", "0.5_oral_dose_oat1", "0.6_oral_dose_oat1", "0.7_oral_dose_oat1", "0.8_oral_dose_oat1", "0.9_oral_dose_oat1")
+
+toxcast_equiv_dose_oat2<-data.frame(matrix(unlist(toxcast_equiv_dose_oat2), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_oat2) <- c("0.05_oral_dose_oat2", "0.1_oral_dose_oat2","0.2_oral_dose_oat2", "0.3_oral_dose_oat2", "0.4_oral_dose_oat2", "0.5_oral_dose_oat2", "0.6_oral_dose_oat2", "0.7_oral_dose_oat2", "0.8_oral_dose_oat2", "0.9_oral_dose_oat2")
+
+toxcast_equiv_dose_bsep<-data.frame(matrix(unlist(toxcast_equiv_dose_bsep), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_bsep) <- c("0.05_oral_dose_bsep", "0.1_oral_dose_bsep","0.2_oral_dose_bsep", "0.3_oral_dose_bsep", "0.4_oral_dose_bsep", "0.5_oral_dose_bsep", "0.6_oral_dose_bsep", "0.7_oral_dose_bsep", "0.8_oral_dose_bsep", "0.9_oral_dose_bsep")
+
+toxcast_equiv_dose_pgp<-data.frame(matrix(unlist(toxcast_equiv_dose_pgp), ncol=10, byrow=TRUE))
+colnames(toxcast_equiv_dose_pgp) <- c("0.05_oral_dose_pgp", "0.1_oral_dose_pgp","0.2_oral_dose_pgp", "0.3_oral_dose_pgp", "0.4_oral_dose_pgp", "0.5_oral_dose_pgp", "0.6_oral_dose_pgp", "0.7_oral_dose_pgp", "0.8_oral_dose_pgp", "0.9_oral_dose_pgp")
+```
+
+```{r}
+get_cheminfo(info='all')
+```
+
+```{r}
+library(dplyr)
+```
+
+```{r}
+toxcast_equiv_dose_bcrp$CAS_fake<-df$CAS_fake
+```
+
+```{r}
+toxcast_equiv_dose_bsep$CAS_fake<-df$CAS_fake
+toxcast_equiv_dose_mrp2$CAS_fake<-df$CAS_fake
+toxcast_equiv_dose_mrp3$CAS_fake<-df$CAS_fake
+toxcast_equiv_dose_mrp4$CAS_fake<-df$CAS_fake
+toxcast_equiv_dose_oat1$CAS_fake<-df$CAS_fake
+toxcast_equiv_dose_oat2$CAS_fake<-df$CAS_fake
+toxcast_equiv_dose_pgp$CAS_fake<-df$CAS_fake
+```
+
+
+
+```{r}
+dataframe_together<-Reduce(function(x, y) left_join(x, y, by = "CAS_fake"), list(toxcast_equiv_dose_bcrp,toxcast_equiv_dose_mrp2,toxcast_equiv_dose_mrp3,toxcast_equiv_dose_mrp4,toxcast_equiv_dose_bsep,toxcast_equiv_dose_oat1,toxcast_equiv_dose_oat2,toxcast_equiv_dose_pgp))
+```
